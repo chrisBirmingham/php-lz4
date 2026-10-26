@@ -70,7 +70,7 @@
 #define PHP_LZ4_CHECKSUM_FRAME (1<<0)
 #define PHP_LZ4_CHECKSUM_BLOCK (1<<1)
 
-#if PHP_VERSION_ID < 80000
+#if PHP_MAJOR_VERSION < 8
 #include "lz4_legacy_arginfo.h"
 #else
 #include "lz4_arginfo.h"
@@ -557,11 +557,20 @@ ZEND_FUNCTION(lz4_compress)
     int extra_len = -1;
 #endif
 
+#if PHP_MAJOR_VERSION < 7
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
                               "z|ls", &data, &level,
                               &extra, &extra_len) == FAILURE) {
         RETURN_FALSE;
     }
+#else
+    ZEND_PARSE_PARAMETERS_START(1, 3)
+        Z_PARAM_ZVAL(data)
+        Z_PARAM_OPTIONAL
+        Z_PARAM_LONG(level)
+        Z_PARAM_STRING(extra, extra_len)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+#endif
 
     if (Z_TYPE_P(data) != IS_STRING) {
         zend_error(E_WARNING,
@@ -595,10 +604,19 @@ ZEND_FUNCTION(lz4_uncompress)
     long max_size = -1, offset = 0;
 #endif
 
+#if PHP_MAJOR_VERSION < 7
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
                               "z|ll", &data, &max_size, &offset) == FAILURE) {
         RETURN_FALSE;
     }
+#else
+    ZEND_PARSE_PARAMETERS_START(1, 3)
+        Z_PARAM_ZVAL(data)
+        Z_PARAM_OPTIONAL
+        Z_PARAM_LONG(max_size)
+        Z_PARAM_LONG(offset)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+#endif
 
     if (Z_TYPE_P(data) != IS_STRING) {
         zend_error(E_WARNING,
@@ -630,11 +648,21 @@ ZEND_FUNCTION(lz4_compress_frame)
     long max_block_size = 0;
     long checksums = 0;
 
+#if PHP_MAJOR_VERSION < 7
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
                               "z|lll", &data, &level,
                               &max_block_size, &checksums) == FAILURE) {
         RETURN_FALSE;
     }
+#else
+    ZEND_PARSE_PARAMETERS_START(1, 4)
+        Z_PARAM_ZVAL(data)
+        Z_PARAM_OPTIONAL
+        Z_PARAM_LONG(level)
+        Z_PARAM_LONG(max_block_size)
+        Z_PARAM_LONG(checksums)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+#endif
 
     if (Z_TYPE_P(data) != IS_STRING) {
         zend_error(E_WARNING,
@@ -664,10 +692,16 @@ ZEND_FUNCTION(lz4_uncompress_frame)
     unsigned long int output_len;
     char *output;
 
+#if PHP_MAJOR_VERSION < 7
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
                               "z", &data) == FAILURE) {
         RETURN_FALSE;
     }
+#else
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+        Z_PARAM_ZVAL(data)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+#endif
 
     if (Z_TYPE_P(data) != IS_STRING) {
         zend_error(E_WARNING,
@@ -696,11 +730,19 @@ ZEND_FUNCTION(lz4_compress_raw)
     int output_len;
     long level = 0;
 
+#if PHP_MAJOR_VERSION < 7
     /* Parse parameters: data (required), level (optional, default 0) */
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
                               "z|l", &data, &level) == FAILURE) {
         RETURN_FALSE;
     }
+#else
+    ZEND_PARSE_PARAMETERS_START(1, 2)
+        Z_PARAM_ZVAL(data)
+        Z_PARAM_OPTIONAL
+        Z_PARAM_LONG(level)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+#endif
 
     /* Validate data is a string */
     if (Z_TYPE_P(data) != IS_STRING) {
@@ -737,11 +779,18 @@ ZEND_FUNCTION(lz4_uncompress_raw)
     long max_size;
 #endif
 
+#if PHP_MAJOR_VERSION < 7
     /* Parse parameters: data (required), max_size (required) */
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
                               "zl", &data, &max_size) == FAILURE) {
         RETURN_FALSE;
     }
+#else
+    ZEND_PARSE_PARAMETERS_START(2, 2)
+        Z_PARAM_ZVAL(data)
+        Z_PARAM_LONG(max_size)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+#endif
 
     /* Validate data is a string */
     if (Z_TYPE_P(data) != IS_STRING) {
