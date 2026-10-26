@@ -569,7 +569,7 @@ ZEND_FUNCTION(lz4_compress)
         Z_PARAM_ZVAL(data)
         Z_PARAM_OPTIONAL
         Z_PARAM_LONG(level)
-        Z_PARAM_STRING_OR_NULL(extra, extra_len)
+        Z_PARAM_STRING_EX(extra, extra_len, 1, 0)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
 #endif
 
