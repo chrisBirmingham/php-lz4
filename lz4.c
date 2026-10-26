@@ -549,11 +549,12 @@ ZEND_FUNCTION(lz4_compress)
     zval *data;
     char *output;
     int output_len;
-    long level = 0;
     char *extra = NULL;
 #if ZEND_MODULE_API_NO >= 20141001
+    zend_long level = 0;
     size_t extra_len = -1;
 #else
+    long level = 0;
     int extra_len = -1;
 #endif
 
@@ -568,7 +569,7 @@ ZEND_FUNCTION(lz4_compress)
         Z_PARAM_ZVAL(data)
         Z_PARAM_OPTIONAL
         Z_PARAM_LONG(level)
-        Z_PARAM_STRING(extra, extra_len)
+        Z_PARAM_STRING_OR_NULL(extra, extra_len)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
 #endif
 
@@ -644,9 +645,15 @@ ZEND_FUNCTION(lz4_compress_frame)
     zval *data;
     char *output;
     int output_len;
+#if ZEND_MODULE_API_NO >= 20141001
+    zend_long level = 0;
+    zend_long max_block_size = 0;
+    zend_long checksums = 0;
+#else
     long level = 0;
     long max_block_size = 0;
     long checksums = 0;
+#endif
 
 #if PHP_MAJOR_VERSION < 7
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -728,7 +735,11 @@ ZEND_FUNCTION(lz4_compress_raw)
     zval *data;
     char *output;
     int output_len;
+#if ZEND_MODULE_API_NO >= 20141001
+    zend_long level = 0;
+#else
     long level = 0;
+#endif
 
 #if PHP_MAJOR_VERSION < 7
     /* Parse parameters: data (required), level (optional, default 0) */
